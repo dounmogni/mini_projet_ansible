@@ -1,0 +1,41 @@
+---  #ajout du repos docker
+- name: Add docker repositories
+  yum_repository:
+    name: docker
+    description: docker
+    baseurl: https://download.docker.com/linux/centos/7/x86_64/stable
+    enabled: yes
+    #ajout de clé
+- name: Add Docker GPG Key
+  rpm_key:
+    key: https://download.docker.com/linux/centos/gpg
+    state: present
+#installation du docker engine(moteur docker)
+- name: Install Docker par moi
+      package:
+        name: docker-ce
+        state: latest
+
+- name: Install docker engine
+  package:    #le module yum aurait pu etre utilisé
+    name:
+     # - docker-ce
+      - docker-ce-cli
+      - containerd.io
+    state: present
+#installation de docker-compose si necessaire plustard
+- name: Install docker-compose
+  get_url:
+    url: https://github.com/docker/compose/releases/download/1.29.2/docker-compose-Linux-x86_64
+    dest: /usr/local/bin/docker-compose
+    mode: 0755
+- name: Enable and Start docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+    #utilisation de pip3 pour piloter docker-py(prealablement installe dans le fichier setup-centos.yml)
+- name: docker python
+  pip:
+    name: docker-py  # docker-py est lalibrerie docker pour python
+    executable: pip3  #pip3 est executable pour piloter python
